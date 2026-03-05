@@ -324,7 +324,18 @@ const en = {
     searchUser: 'Search by user',
     searchEmail: 'Search by Email',
     searchSender: 'Search by Sender',
-    userEmail: 'Email Address'
+    userEmail: 'Email Address',
+    passkeyLogin: 'Passkey Login',
+    passkeyEnabled: 'Passkey Login',
+    passkeyLoginFailed: 'Passkey login failed',
+    passkeys: 'Passkeys',
+    registerPasskey: 'Register Passkey',
+    passkeyId: 'Passkey ID',
+    passkeyRegSuccess: 'Passkey registered successfully',
+    passkeyRegFailed: 'Failed to register passkey',
+    passkeyRegistered: 'Delete the current passkey to register a new one.',
+    deletePasskeyConfirm: 'Are you sure you want to delete this passkey?',
+    deleteSuccess: 'Deleted successfully'
 }
 
 export default en

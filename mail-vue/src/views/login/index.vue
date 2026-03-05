@@ -47,6 +47,7 @@
           <el-button class="btn" v-if="settingStore.settings.linuxdoSwitch"  style="margin-top: 10px"  @click="linuxDoLogin">
             <el-avatar src="/image/linuxdo.webp" :size="18" style="margin-right: 10px" />LinuxDo
           </el-button>
+          <el-button class="btn" style="margin-top: 10px" v-if="settingStore.settings.passkeyEnabled" @click="handlePasskeyLogin">{{ $t('passkeyLogin') }}</el-button>
         </div>
         <div v-show="show !== 'login'">
           <el-input class="email-input" v-model="registerForm.email" type="text" :placeholder="$t('emailAccount')"
@@ -149,8 +150,8 @@
 <script setup>
 import router from "@/router";
 import {computed, nextTick, reactive, ref} from "vue";
-import {login} from "@/request/login.js";
-import {register} from "@/request/login.js";
+import {login, register, getWebauthnLoginOptions, verifyWebauthnLogin} from "@/request/login.js";
+import { startAuthentication } from '@simplewebauthn/browser';
 import {isEmail} from "@/utils/verify-utils.js";
 import {useSettingStore} from "@/store/setting.js";
 import {useAccountStore} from "@/store/account.js";
@@ -348,6 +349,29 @@ function bind() {
   }).catch(() => {
     bindLoading.value = false
   })
+}
+
+const handlePasskeyLogin = async () => {
+  if (!form.email) {
+    ElMessage({ message: t('emptyEmailMsg'), type: 'error', plain: true })
+    return
+  }
+  let email = form.email + (settingStore.settings.loginDomain === 0 ? suffix.value : '');
+  if (!isEmail(email)) {
+    ElMessage({ message: t('notEmailMsg'), type: 'error', plain: true })
+    return
+  }
+  
+  try {
+    const options = await getWebauthnLoginOptions(email);
+    const authResp = await startAuthentication(options);
+    const data = await verifyWebauthnLogin({ challengeId: options.challengeId, response: authResp });
+    const token = data.token || data;
+    await saveToken(token);
+  } catch (error) {
+    console.error('Passkey login failed:', error);
+    ElMessage({ message: t('passkeyLoginFailed'), type: 'error', plain: true });
+  }
 }
 
 const submit = () => {

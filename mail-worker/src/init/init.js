@@ -28,8 +28,17 @@ const dbInit = {
 		await this.v2_7DB(c);
 		await this.v2_8DB(c);
 		await this.v2_9DB(c);
+		await this.v3_0DB(c);
 		await settingService.refresh(c);
 		return c.text('success');
+	},
+
+	async v3_0DB(c) {
+		try {
+			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN passkey_enabled INTEGER NOT NULL DEFAULT 1;`).run();
+		} catch (e) {
+			console.warn(`跳过字段：${e.message}`);
+		}
 	},
 
 	async v2_9DB(c) {
@@ -574,6 +583,24 @@ const dbInit = {
 			auto_refresh INTEGER NOT NULL,
 			register_verify INTEGER NOT NULL,
 			add_email_verify INTEGER NOT NULL
+		  )
+		`).run();
+
+		await c.env.db.prepare(`
+		  CREATE TABLE IF NOT EXISTS passkey_challenges (
+			id TEXT PRIMARY KEY,
+			challenge TEXT NOT NULL,
+			expires_at DATETIME NOT NULL
+		  )
+		`).run();
+
+		await c.env.db.prepare(`
+		  CREATE TABLE IF NOT EXISTS passkey_credentials (
+			id TEXT PRIMARY KEY,
+			user_id INTEGER NOT NULL,
+			public_key TEXT NOT NULL,
+			counter INTEGER NOT NULL,
+			transports TEXT
 		  )
 		`).run();
 

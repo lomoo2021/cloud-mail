@@ -29,6 +29,21 @@
           <el-button type="primary" @click="pwdShow = true">{{$t('changePwdBtn')}}</el-button>
         </div>
       </div>
+      <div class="item" v-if="settingStore.settings.passkeyEnabled">
+        <div>{{$t('passkeys')}}</div>
+        <div>
+          <template v-if="passkeys.length === 0">
+            <el-button type="primary" :loading="registerLoading" @click="handleRegisterPasskey">{{$t('registerPasskey')}}</el-button>
+          </template>
+          <template v-else>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-family: monospace; font-size: 12px; color: var(--el-text-color-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px;">{{ passkeys[0].id }}</span>
+              <el-button type="danger" size="small" @click="handleDeletePasskey(passkeys[0].id)">{{$t('delete')}}</el-button>
+            </div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--el-text-color-placeholder);">{{$t('passkeyRegistered')}}</div>
+          </template>
+        </div>
+      </div>
     </div>
     <div class="del-email" v-perm="'my:delete'">
       <div class="title">{{$t('deleteUser')}}</div>
@@ -49,20 +64,91 @@
   </div>
 </template>
 <script setup>
-import {reactive, ref, defineOptions} from 'vue'
-import {resetPassword, userDelete} from "@/request/my.js";
+import {reactive, ref, defineOptions, onMounted} from 'vue'
+import {resetPassword, userDelete, getWebauthnRegisterOptions, verifyWebauthnRegister, getWebauthnList, deleteWebauthn} from "@/request/my.js";
+import {startRegistration} from '@simplewebauthn/browser';
 import {useUserStore} from "@/store/user.js";
 import router from "@/router/index.js";
 import {accountSetName} from "@/request/account.js";
 import {useAccountStore} from "@/store/account.js";
+import {useSettingStore} from "@/store/setting.js";
 import {useI18n} from "vue-i18n";
+import {ElMessageBox, ElMessage} from 'element-plus';
 
 const { t } = useI18n()
 const accountStore = useAccountStore()
 const userStore = useUserStore();
+const settingStore = useSettingStore();
 const setPwdLoading = ref(false)
 const setNameShow = ref(false)
 const accountName = ref(null)
+
+const passkeys = ref([])
+const registerLoading = ref(false)
+
+const loadPasskeys = async () => {
+  try {
+    const res = await getWebauthnList()
+    passkeys.value = res || []
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(() => {
+  loadPasskeys()
+})
+
+const handleRegisterPasskey = async () => {
+  registerLoading.value = true
+  try {
+    const options = await getWebauthnRegisterOptions()
+
+    const registrationResp = await startRegistration(options)
+
+    await verifyWebauthnRegister({
+      challengeId: options.challengeId,
+      response: registrationResp
+    })
+
+    ElMessage({
+      message: t('passkeyRegSuccess'),
+      type: 'success',
+      plain: true,
+    })
+    
+    loadPasskeys()
+  } catch (err) {
+    console.error(err)
+    ElMessage({
+      message: t('passkeyRegFailed'),
+      type: 'error',
+      plain: true,
+    })
+  } finally {
+    registerLoading.value = false
+  }
+}
+
+const handleDeletePasskey = (id) => {
+  ElMessageBox.confirm(t('deletePasskeyConfirm'), {
+    confirmButtonText: t('confirm'),
+    cancelButtonText: t('cancel'),
+    type: 'warning'
+  }).then(async () => {
+    try {
+      await deleteWebauthn(id)
+      ElMessage({
+        message: t('deleteSuccess'),
+        type: 'success',
+        plain: true,
+      })
+      loadPasskeys()
+    } catch (err) {
+      console.error(err)
+    }
+  }).catch(() => {})
+}
 
 defineOptions({
   name: 'setting'
@@ -206,8 +292,8 @@ function submitPwd() {
 
     .item {
       display: grid;
-      grid-template-columns: 50px 1fr;
-      gap: 140px;
+      grid-template-columns: 6em 1fr;
+      gap: 4vw;
       position: relative;
       .user-name {
         display: grid;
@@ -233,12 +319,9 @@ function submitPwd() {
         cursor: pointer;
       }
 
-      @media (max-width: 767px) {
-        gap: 70px;
-      }
-
       div:first-child {
         font-weight: bold;
+        white-space: nowrap;
       }
 
       div:last-child {

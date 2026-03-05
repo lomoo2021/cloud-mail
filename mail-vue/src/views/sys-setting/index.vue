@@ -62,6 +62,13 @@
                 </div>
               </div>
               <div class="setting-item">
+                <div><span>{{ $t('passkeyEnabled') }}</span></div>
+                <div>
+                  <el-switch @change="change" :before-change="beforeChange" :active-value="1" :inactive-value="0"
+                             v-model="setting.passkeyEnabled"/>
+                </div>
+              </div>
+              <div class="setting-item">
                 <div>
                   <span>{{ $t('emailPrefix') }}</span>
                 </div>

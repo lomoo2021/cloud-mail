@@ -324,6 +324,17 @@ const zh = {
     searchUser: '搜索用户',
     searchEmail: '搜索邮箱',
     searchSender: '搜索发件人',
-    userEmail: '用户邮箱'
+    userEmail: '用户邮箱',
+    passkeyLogin: '通行密钥登录',
+    passkeyEnabled: '开启通行密钥',
+    passkeyLoginFailed: '通行密钥登录失败',
+    passkeys: '通行密钥',
+    registerPasskey: '注册通行密钥',
+    passkeyId: '密钥ID',
+    passkeyRegSuccess: '通行密钥注册成功',
+    passkeyRegFailed: '通行密钥注册失败',
+    passkeyRegistered: '删除当前密钥后可重新注册。',
+    deletePasskeyConfirm: '确定要删除这个通行密钥吗？',
+    deleteSuccess: '删除成功'
 }
 export default zh
