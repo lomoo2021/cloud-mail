@@ -1,6 +1,7 @@
 name = "${NAME}"
 main = "src/index.js"
 compatibility_date = "2025-06-04"
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
 
 [observability]
 enabled = true
