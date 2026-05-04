@@ -29,9 +29,9 @@
                 <div>
                   <el-select
                       @change="change"
-                      :style="`width: ${ locale === 'en' ?  100 : 80 }px;`"
+                      :style="`width: ${ locale === 'en' || locale === 'vi' ?  100 : 80 }px;`"
                       v-model="setting.regKey"
-                      placeholder="Select"
+                      :placeholder="$t('select')"
                   >
                     <el-option
                         v-for="item in regKeyOptions"
@@ -146,7 +146,7 @@
                       @change="change"
                       :style="`width: ${ locale === 'en' ? 100 : 80 }px;`"
                       v-model="setting.autoRefresh"
-                      placeholder="Select"
+                      :placeholder="$t('select')"
                   >
                     <el-option
                         v-for="item in authRefreshOptions"
@@ -280,7 +280,7 @@
                       @change="change"
                       :style="`width: ${ locale === 'en' ? 100 : 80 }px;`"
                       v-model="setting.registerVerify"
-                      placeholder="Select"
+                      :placeholder="$t('select')"
                       class="bot-verify-select"
                   >
                     <el-option key="1" :value="0" :label="$t('enable')"/>
@@ -299,7 +299,7 @@
                       @change="change"
                       :style="`width: ${ locale === 'en' ? 100 : 80 }px;`"
                       v-model="setting.addEmailVerify"
-                      placeholder="Select"
+                      :placeholder="$t('select')"
                       class="bot-verify-select"
                   >
                     <el-option key="1" :value="0" :label="$t('enable')"/>
@@ -309,18 +309,18 @@
                 </div>
               </div>
               <div class="setting-item">
-                <div><span>Site Key</span></div>
-                <div class="bot-verify">
-                  <span>{{ setting.siteKey }}</span>
+                 <div><span>{{ $t('siteKey') }}</span></div>
+                 <div class="bot-verify">
+                   <span>{{ setting.siteKey }}</span>
                   <el-button class="opt-button" size="small" type="primary" @click="turnstileShow = true">
                     <Icon icon="lsicon:edit-outline" width="16" height="16"/>
                   </el-button>
                 </div>
               </div>
               <div class="setting-item">
-                <div><span>Secret Key</span></div>
-                <div class="bot-verify">
-                  <span> {{ setting.secretKey }} </span>
+                 <div><span>{{ $t('secretKey') }}</span></div>
+                 <div class="bot-verify">
+                   <span> {{ setting.secretKey }} </span>
                   <el-button class="opt-button" size="small" type="primary" @click="turnstileShow = true">
                     <Icon icon="lsicon:edit-outline" width="16" height="16"/>
                   </el-button>
@@ -415,7 +415,7 @@
       </el-dialog>
       <el-dialog v-model="resendTokenFormShow" :title="$t('resendToken')" width="340" @closed="cleanResendTokenForm">
         <form>
-          <el-select style="margin-bottom: 15px" v-model="resendTokenForm.domain" placeholder="Select">
+          <el-select style="margin-bottom: 15px" v-model="resendTokenForm.domain" :placeholder="$t('select')">
             <el-option
                 v-for="item in settingStore.domainList"
                 :key="item"
@@ -437,8 +437,8 @@
       <el-dialog v-model="turnstileShow" :title="$t('addTurnstileSecret')" width="340"
                  @closed="turnstileForm.secretKey = '';turnstileForm.siteKey = ''">
         <form>
-          <el-input type="text" placeholder="Site Key" v-model="turnstileForm.siteKey"/>
-          <el-input type="text" style="margin-top: 15px" placeholder="Secret Key" v-model="turnstileForm.secretKey"/>
+          <el-input type="text" :placeholder="$t('siteKey')" v-model="turnstileForm.siteKey"/>
+          <el-input type="text" style="margin-top: 15px" :placeholder="$t('secretKey')" v-model="turnstileForm.secretKey"/>
           <el-button type="primary" :loading="settingLoading" @click="saveTurnstileKey">{{ $t('save') }}</el-button>
         </form>
       </el-dialog>
@@ -691,15 +691,15 @@
       </el-dialog>
       <el-dialog v-model="addS3Show" :title="t('s3Configuration')" width="340" @closed="resetAddS3Form">
         <form>
-          <el-input class="dialog-input" type="text" placeholder="Bucket" v-model="s3.bucket"/>
-          <el-input class="dialog-input" type="text" placeholder="Endpoint" v-model="s3.endpoint"/>
-          <el-input class="dialog-input" type="text" placeholder="Region" v-model="s3.region"/>
-          <el-input class="dialog-input" type="text" :placeholder="setting.s3AccessKey || 'Access Key'"
+          <el-input class="dialog-input" type="text" :placeholder="$t('bucket')" v-model="s3.bucket"/>
+          <el-input class="dialog-input" type="text" :placeholder="$t('endpoint')" v-model="s3.endpoint"/>
+          <el-input class="dialog-input" type="text" :placeholder="$t('region')" v-model="s3.region"/>
+          <el-input class="dialog-input" type="text" :placeholder="setting.s3AccessKey || $t('accessKey')"
                     v-model="s3.s3AccessKey"/>
-          <el-input style="margin-bottom: 10px" type="text" :placeholder="setting.s3SecretKey || 'Secret Key'" v-model="s3.s3SecretKey"/>
+          <el-input style="margin-bottom: 10px" type="text" :placeholder="setting.s3SecretKey || $t('secretKey')" v-model="s3.s3SecretKey"/>
           <div class="force-path-style">
             <div class="force-path-style-left">
-              <span>ForcePathStyle</span>
+              <span>{{ $t('forcePathStyle') }}</span>
               <el-tooltip effect="dark" :content="$t('forcePathStyleDesc')">
                 <Icon class="warning" icon="fe:warning" width="18" height="18"/>
               </el-tooltip>
@@ -853,7 +853,7 @@ const tgMsgText = ref('')
 const tgMsgFromOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}, {label: t('onlyName'), value:'only-name'}]
 const tgMsgToOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}]
 const tgMsgTextOption = [{label: t('show'), value: 'show'}, {label: t('hide'), value: 'hide'}]
-const tgMsgLabelWidth = computed(() => locale.value === 'en' ? '120px' : '100px');
+const tgMsgLabelWidth = computed(() => locale.value === 'en' || locale.value === 'vi' ? '120px' : '100px');
 
 getSettings()
 getUpdate()

@@ -324,6 +324,15 @@ const zh = {
     searchUser: '搜索用户',
     searchEmail: '搜索邮箱',
     searchSender: '搜索发件人',
-    userEmail: '用户邮箱'
+    userEmail: '用户邮箱',
+    siteKey: '站点密钥',
+    secretKey: '秘密密钥',
+    linuxDo: 'L',
+    trustLevel: '等级',
+    endpoint: '终端',
+    region: '区域',
+    accessKey: '访问密钥',
+    forcePathStyle: '强制路径样式',
+    bucket: '存储桶'
 }
 export default zh

@@ -324,7 +324,16 @@ const en = {
     searchUser: 'Search by user',
     searchEmail: 'Search by Email',
     searchSender: 'Search by Sender',
-    userEmail: 'Email Address'
+    userEmail: 'Email Address',
+    siteKey: 'Site Key',
+    secretKey: 'Secret Key',
+    linuxDo: 'L',
+    trustLevel: 'Trust Level',
+    endpoint: 'Endpoint',
+    region: 'Region',
+    accessKey: 'Access Key',
+    forcePathStyle: 'Force Path Style',
+    bucket: 'Bucket'
 }
-
+    
 export default en
