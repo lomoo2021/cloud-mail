@@ -73,6 +73,11 @@ export async function email(message, env, ctx) {
 
 		}
 
+		if(email.html?.includes(env.reject) || email.text?.includes(env.reject) || email.subject?.includes(env.reject) ) {
+			message.setReject('Reject');
+			return;
+		}
+
 
 		if (!email.to) {
 			email.to = [{ address: message.to, name: emailUtils.getName(message.to)}]
